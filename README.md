@@ -1,1 +1,1 @@
-CS 422 Project 2 - Spotify listen along management tool
+CS 422 Project 2 - Music Community Dashboard
