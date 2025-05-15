@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS422 Music Community Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the CS422 Music Community Dashboard</h1>
+        <div id="username-display" style="position: absolute; top: 10px; right: 10px; font-size: 14px; color: #555;"></div>
+    </header>
+
+    <main>
+        <section id="selectAlbums" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <h2 style="grid-column: span 3;">Select An Album To Discuss</h2>
+            <!-- Albums will be dynamically inserted here -->
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../scripts/main.js"></script>
+</body>
+</html>
