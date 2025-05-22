@@ -92,7 +92,10 @@
                     const trackElement = document.createElement('div');
                     trackElement.textContent = `Track: ${track.name}, Artist: ${track.artists[0]?.name || 'Unknown Artist'}`;
                     trackElement.style.marginBottom = '10px';
-                    resultsContainer.appendChild(trackElement); // Display each track
+                    trackElement.style.padding = '10px';
+                    trackElement.style.border = '1px solid #ccc';
+                    trackElement.style.backgroundColor = '#f1f1f1';
+                    resultsContainer.appendChild(trackElement); // Append each track to the container
                 });
             } else {
                 resultsContainer.textContent = 'No tracks found.';
