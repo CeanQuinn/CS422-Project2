@@ -87,6 +87,57 @@
         }
     }
 
+    // Function to search Spotify
+    async function searchSpotify(query) {
+        try {
+            if (!accessToken) {
+                console.log('Access token not found, retrieving...');
+                updateLogContainer('Access token not found, retrieving...');
+                await getAccessToken();
+            }
+
+            console.log(`Searching Spotify for: ${query}`);
+            updateLogContainer(`Searching Spotify for: ${query}`);
+            const response = await window.axios.get(`${SPOTIFY_API_BASE_URL}/search`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
+                params: { q: query, type: 'track', limit: 10 },
+            });
+            console.log('Spotify search response:', response.data);
+
+            const tracks = response.data.tracks.items;
+            if (tracks.length > 0) {
+                const trackInfo = tracks.map(track => `Track: ${track.name}, Artist: ${track.artists[0]?.name || 'Unknown Artist'}`).join('\n');
+                console.log(trackInfo);
+                updateLogContainer(trackInfo.replace(/\n/g, '<br>'));
+            } else {
+                console.log('No tracks found.');
+                updateLogContainer('No tracks found.');
+            }
+        } catch (error) {
+            console.error('Error searching Spotify:', error.message);
+            updateLogContainer('Error searching Spotify.');
+        }
+    }
+
+    // Add event listener to search button
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchButton = document.getElementById('search-button');
+        const searchInput = document.getElementById('search-input');
+
+        if (searchButton && searchInput) {
+            searchButton.addEventListener('click', () => {
+                const query = searchInput.value.trim();
+                if (query) {
+                    searchSpotify(query);
+                } else {
+                    updateLogContainer('Please enter a search term.');
+                }
+            });
+        } else {
+            console.error('Search input or button not found in the DOM.');
+        }
+    });
+
     // Ensure necessary functions are called when the page loads
     window.onload = async () => {
         console.log('Window onload triggered.'); // Debug log to confirm window.onload execution
