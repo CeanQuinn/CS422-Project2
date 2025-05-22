@@ -1,66 +1,84 @@
-// Spotify API
-const SPOTIFY_CLIENT_ID = '75d7b61bcd6c478eae379ebb9f875eb8';
-const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
-let accessToken = '';
+(() => {
+    console.log('Script loaded and executed.'); // Debug log to confirm script execution
 
-// Function to get Spotify access token
-async function getAccessToken() {
-    const redirectUri = encodeURIComponent('https://<your-username>.github.io/<repository-name>/home.html'); // Replace with your GitHub Pages URL
-    const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${redirectUri}&scope=user-read-private`;
+    const SPOTIFY_CLIENT_ID = '75d7b61bcd6c478eae379ebb9f875eb8';
+    const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
+    const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
+    const REDIRECT_URI = 'https://ceanquinn.github.io/CS422-Project2/';
+    let accessToken = '';
 
-    if (!window.location.hash.includes('access_token')) {
-        window.location.href = authUrl;
-    } else {
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
-        accessToken = params.get('access_token');
-    }
-}
+    // Function to get Spotify access token
+    async function getAccessToken() {
+        console.log('Checking for existing access token...');
+        const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=user-read-private`;
 
-// Function to fetch and display 3 songs
-async function displaySongs() {
-    try {
-        if (!accessToken) await getAccessToken();
+        if (!window.location.search.includes('code')) {
+            console.log('Redirecting to Spotify authorization...');
+            window.location.href = authUrl;
+        } else {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
 
-        const response = await window.axios.get(`${SPOTIFY_API_BASE_URL}/browse/new-releases`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        const songs = response.data.albums.items.slice(0, 3); // Get the first 3 songs
-        const songGrid = document.getElementById('selectSongs');
+            try {
+                console.log('Exchanging authorization code for access token...');
+                const response = await window.axios.post(SPOTIFY_TOKEN_URL, null, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        Authorization: `Basic ${btoa(SPOTIFY_CLIENT_ID + ':' + 'd99fa9fbc7d84892bb22151ab385fbfc')}`, // Replace with your client secret
+                    },
+                    params: {
+                        grant_type: 'authorization_code',
+                        code,
+                        redirect_uri: REDIRECT_URI,
+                    },
+                });
 
-        songs.forEach(song => {
-            const songElement = document.createElement('div');
-            songElement.className = 'song';
-            songElement.innerHTML = `
-                <img src="${song.images[0].url}" alt="${song.name}" />
-                <p>${song.name} by ${song.artists[0].name}</p>
-            `;
-            songElement.addEventListener('click', () => {
-                alert(`You selected: ${song.name}`);
-            });
-            songGrid.appendChild(songElement);
-        });
-    } catch (error) {
-        console.error('Error fetching songs:', error.message);
-    }
-}
-
-// Function to display the username in home.html
-function displayUsername() {
-    const username = localStorage.getItem('username');
-    if (username) {
-        const usernameDisplay = document.getElementById('username-display');
-        if (usernameDisplay) {
-            usernameDisplay.textContent = `Logged in as: ${username}`;
+                accessToken = response.data.access_token;
+                console.log('Access token retrieved:', accessToken);
+            } catch (error) {
+                console.error('Error exchanging authorization code for access token:', error.message);
+            }
         }
     }
-}
 
-// Ensure displaySongs and displayUsername are called when the page loads
-if (window.location.pathname.includes('home.html')) {
+    // Function to fetch and log a statement from Spotify API
+    async function logSpotifyStatement() {
+        try {
+            if (!accessToken) {
+                console.log('Access token not found, retrieving...');
+                await getAccessToken();
+            }
+
+            console.log('Fetching data from Spotify API...');
+            const response = await window.axios.get(`${SPOTIFY_API_BASE_URL}/browse/new-releases`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            const song = response.data.albums.items[0];
+
+            if (song) {
+                console.log('Spotify API is working:');
+                console.log(`Song Name: ${song.name}`);
+                console.log(`Artist: ${song.artists[0]?.name || 'Unknown Artist'}`);
+            } else {
+                console.log('No songs found.');
+            }
+        } catch (error) {
+            console.error('Error fetching data from Spotify API:', error.message);
+        }
+    }
+
+    // Ensure necessary functions are called when the page loads
     window.onload = async () => {
-        await getAccessToken();
-        displayUsername();
-        displaySongs();
+        console.log('Window onload triggered.'); // Debug log to confirm window.onload execution
+        try {
+            console.log('Initializing Spotify API...');
+            await getAccessToken();
+            console.log('Access token retrieved successfully.');
+            await logSpotifyStatement();
+        } catch (error) {
+            console.error('Error during page load:', error.message);
+        }
     };
-}
+
+    console.log('Script setup complete.'); // Debug log to confirm script setup
+})();
