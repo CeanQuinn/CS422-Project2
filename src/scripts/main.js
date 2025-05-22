@@ -5,7 +5,7 @@ let accessToken = '';
 
 // Function to get Spotify access token
 async function getAccessToken() {
-    const redirectUri = encodeURIComponent('https://<your-username>.github.io/<repository-name>/home.html'); // Replace with your GitHub Pages URL
+    const redirectUri = encodeURIComponent('https://ceanquinn.github.io/CS422-Project2/'); // Replace with your GitHub Pages URL
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${redirectUri}&scope=user-read-private`;
 
     if (!window.location.hash.includes('access_token')) {
