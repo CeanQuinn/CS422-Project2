@@ -74,7 +74,7 @@
 
             const song = response.data.albums.items[0];
             if (song) {
-                const songInfo = `Spotify API is working: Song Name: ${song.name}, Artist: ${song.artists[0]?.name || 'Unknown Artist'}`;
+                const songInfo = `Song Name: ${song.name}, Artist: ${song.artists[0]?.name || 'Unknown Artist'}`;
                 console.log(songInfo);
                 updateLogContainer(songInfo);
             } else {
