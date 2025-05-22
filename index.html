@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS422 Music Community Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="src/scripts/main.js"></script>
+    <link rel="stylesheet" href="src/pages/styles.css">
+    <script src="src/scripts/main.js" defer></script>
 </head>
 <body>
     <header>
@@ -14,13 +14,13 @@
     </header>
 
     <main>
-        <section id="selectSongs" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-            <h2 style="grid-column: span 3;">Select A Song To Discuss</h2>
+        <section id="selectSongs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px;">
+            <h2 style="grid-column: span 3; text-align: center;">Select A Song To Discuss</h2>
             <!-- Songs will be dynamically inserted here -->
         </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="../scripts/main.js"></script>
+    <script src="src/scripts/main.js"></script>
 </body>
 </html>

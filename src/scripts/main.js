@@ -17,34 +17,6 @@ async function getAccessToken() {
     }
 }
 
-// Function to fetch and display 3 songs
-async function displaySongs() {
-    try {
-        if (!accessToken) await getAccessToken();
-
-        const response = await window.axios.get(`${SPOTIFY_API_BASE_URL}/browse/new-releases`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        const songs = response.data.albums.items.slice(0, 3); // Get the first 3 songs
-        const songGrid = document.getElementById('selectSongs');
-
-        songs.forEach(song => {
-            const songElement = document.createElement('div');
-            songElement.className = 'song';
-            songElement.innerHTML = `
-                <img src="${song.images[0].url}" alt="${song.name}" />
-                <p>${song.name} by ${song.artists[0].name}</p>
-            `;
-            songElement.addEventListener('click', () => {
-                alert(`You selected: ${song.name}`);
-            });
-            songGrid.appendChild(songElement);
-        });
-    } catch (error) {
-        console.error('Error fetching songs:', error.message);
-    }
-}
-
 // Function to display the username in home.html
 function displayUsername() {
     const username = localStorage.getItem('username');
@@ -56,11 +28,32 @@ function displayUsername() {
     }
 }
 
-// Ensure displaySongs and displayUsername are called when the page loads
-if (window.location.pathname.includes('home.html')) {
+// Function to fetch and log 1 song
+async function logSongInfo() {
+    try {
+        if (!accessToken) await getAccessToken();
+
+        const response = await window.axios.get(`${SPOTIFY_API_BASE_URL}/browse/new-releases`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const song = response.data.albums.items[0]; // Get the first song
+
+        if (song) {
+            console.log(`Song Name: ${song.name}`);
+            console.log(`Artist: ${song.artists[0]?.name || 'Unknown Artist'}`);
+            console.log(`Album Image URL: ${song.images[0]?.url || 'No Image Available'}`);
+        } else {
+            console.log('No songs found.');
+        }
+    } catch (error) {
+        console.error('Error fetching song info:', error.message);
+    }
+}
+
+// Ensure necessary functions are called when the page loads
+if (window.location.pathname.includes('index.html')) {
     window.onload = async () => {
         await getAccessToken();
-        displayUsername();
-        displaySongs();
+        logSongInfo(); // Log song info to the terminal
     };
 }
