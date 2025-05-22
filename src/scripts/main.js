@@ -1,40 +1,47 @@
-// api
-const GENIUS_API_KEY = '_eIQErLcmOUQFt5Sk1it0zUUZdTq7V_J7Pqk2Mk6pAKIYBqx-ULsgJc1mJ4CfKZG'; // Replace with your Genius API key
-const GENIUS_API_BASE_URL = 'http://localhost:3000/api'; // Use the proxy server URL
+// Spotify API
+const SPOTIFY_CLIENT_ID = '75d7b61bcd6c478eae379ebb9f875eb8';
+const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
+let accessToken = '';
 
-// Function to fetch and display 9 albums
-async function displayAlbums() {
-    try {
-        const response = await window.axios.get(`${GENIUS_API_BASE_URL}/albums`);
-        const albums = response.data.response.hits.slice(0, 9); // Get the first 9 albums
-        const albumGrid = document.getElementById('selectAlbums');
+// Function to get Spotify access token
+async function getAccessToken() {
+    const redirectUri = encodeURIComponent('https://<your-username>.github.io/<repository-name>/home.html'); // Replace with your GitHub Pages URL
+    const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${redirectUri}&scope=user-read-private`;
 
-        albums.forEach(album => {
-            const albumData = album.result;
-            const albumElement = document.createElement('div');
-            albumElement.className = 'album';
-            albumElement.innerHTML = `
-                <img src="${albumData.song_art_image_thumbnail_url}" alt="${albumData.title}" />
-                <p>${albumData.title}</p>
-            `;
-            albumElement.addEventListener('click', () => {
-                alert(`You selected: ${albumData.title}`);
-            });
-            albumGrid.appendChild(albumElement);
-        });
-    } catch (error) {
-        console.error('Error fetching albums:', error.message);
+    if (!window.location.hash.includes('access_token')) {
+        window.location.href = authUrl;
+    } else {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        accessToken = params.get('access_token');
     }
 }
 
-function saveUsername(mode) {
-    const username = document.getElementById('username').value.trim();
-    if (username) {
-        localStorage.setItem('username', username);
-        localStorage.setItem('mode', mode);
-        location.href = '../pages/home.html';
-    } else {
-        alert('Please enter a username.');
+// Function to fetch and display 3 songs
+async function displaySongs() {
+    try {
+        if (!accessToken) await getAccessToken();
+
+        const response = await window.axios.get(`${SPOTIFY_API_BASE_URL}/browse/new-releases`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const songs = response.data.albums.items.slice(0, 3); // Get the first 3 songs
+        const songGrid = document.getElementById('selectSongs');
+
+        songs.forEach(song => {
+            const songElement = document.createElement('div');
+            songElement.className = 'song';
+            songElement.innerHTML = `
+                <img src="${song.images[0].url}" alt="${song.name}" />
+                <p>${song.name} by ${song.artists[0].name}</p>
+            `;
+            songElement.addEventListener('click', () => {
+                alert(`You selected: ${song.name}`);
+            });
+            songGrid.appendChild(songElement);
+        });
+    } catch (error) {
+        console.error('Error fetching songs:', error.message);
     }
 }
 
@@ -49,10 +56,11 @@ function displayUsername() {
     }
 }
 
-// Ensure displayAlbums and displayUsername are called when the page loads
+// Ensure displaySongs and displayUsername are called when the page loads
 if (window.location.pathname.includes('home.html')) {
-    window.onload = () => {
+    window.onload = async () => {
+        await getAccessToken();
         displayUsername();
-        displayAlbums();
+        displaySongs();
     };
 }
