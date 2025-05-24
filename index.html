@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS422 Project 2</title>
+    <link rel="stylesheet" href="src/pages/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Music Database</h1>
+    </header>
+
+    <main>
+        <p>Ensure you are logged into Spotify to allow API access. Open the browser console to view logs.</p>
+        <div id="search-container" style="margin-top: 20px;">
+            <input type="text" id="search-input" placeholder="Search Spotify..." style="padding: 10px; width: 80%; font-size: 14px;">
+            <button id="search-button" style="padding: 10px; font-size: 14px;">Search</button>
+        </div>
+        <!--Sliders-->
+        <div id="filter-container" style="margin-top: 20px;">
+            <label>Speechiness: <input type="range" id="speechiness-slider" min="0" max="1" step="0.01" value="0"></label>
+            <span id="speechiness-value">0</span>
+            <br>
+            <label>Tempo: <input type="range" id="tempo-slider" min="50" max="200" step="1" value="120"></label>
+            <span id="tempo-value">120</span>
+            <br>
+            <label>Energy: <input type="range" id="energy-slider" min="0" max="1" step="0.01" value="0"></label>
+            <span id="energy-value">0</span>
+            <br>
+            <label>Danceability: <input type="range" id="danceability-slider" min="0" max="1" step="0.01" value="0"></label>
+            <span id="danceability-value">0</span>
+        </div>
+        <div id="results-container" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
+            <!-- Search results will be displayed here -->
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="src/scripts/main.js" defer></script>
+</body>
+</html>
