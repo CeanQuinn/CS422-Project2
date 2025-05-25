@@ -1,28 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS422 Project 2</title>
-    <link rel="stylesheet" href="src/pages/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CS 422 Spotify Search</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #121212;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    input, button {
+      font-size: 1.2rem;
+      padding: 0.5rem;
+      margin: 0.5rem;
+      border-radius: 5px;
+    }
+
+    .track {
+      display: flex;
+      align-items: center;
+      margin: 1rem auto;
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 80%;
+      max-width: 600px;
+    }
+
+    .track img {
+      height: 64px;
+      width: 64px;
+      border-radius: 5px;
+      margin-right: 1rem;
+    }
+
+    .info {
+      text-align: left;
+    }
+
+    .info a {
+      color: #1db954;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Music Database</h1>
-    </header>
+  <h1>Spotify Track Search</h1>
+  <input type="text" id="search" placeholder="Search tracks..." />
+  <button onclick="search()">Search</button>
+  <div id="results"></div>
 
-    <main>
-        <p>Ensure you are logged into Spotify to allow API access. Open the browser console to view logs.</p>
-        <div id="search-container" style="margin-top: 20px;">
-            <input type="text" id="search-input" placeholder="Search Spotify..." style="padding: 10px; width: 80%; font-size: 14px;">
-            <button id="search-button" style="padding: 10px; font-size: 14px;">Search</button>
-        </div>
-        <div id="results-container" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
-            <!-- Search results will be displayed here -->
-        </div>
-    </main>
+  <script>
+    document.getElementById('search').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        search();
+      }
+    });
+    async function search() {
+      const query = document.getElementById('search').value;
+      const res = await fetch(`http://localhost:3001/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="src/scripts/main.js" defer></script>
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+
+      data.tracks.items.forEach(track => {
+        const div = document.createElement('div');
+        div.className = 'track';
+
+        div.innerHTML = `
+          <img src="${track.album.images[0]?.url}" alt="Album Art" />
+          <div class="info">
+            <div><a href="${track.external_urls.spotify}" target="_blank">${track.name}</a></div>
+            <div>by ${track.artists.map(artist => artist.name).join(', ')}</div>
+            ${track.preview_url ? `<audio controls src="${track.preview_url}"></audio>` : `<small>No preview</small>`}
+          </div>
+        `;
+
+        results.appendChild(div);
+      });
+    }
+  </script>
 </body>
 </html>
+
