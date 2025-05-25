@@ -127,6 +127,21 @@
         } else {
             console.error('Search input or button not found in the DOM.');
         }
+        const sliders = [
+        { id: 'speechiness', min: 0, max: 1, step: 0.01 },
+        { id: 'tempo', min: 50, max: 200, step: 1 },
+        { id: 'energy', min: 0, max: 1, step: 0.01 },
+        { id: 'danceability', min: 0, max: 1, step: 0.01 }
+        ];
+        sliders.forEach(slider => {
+            const input = document.getElementById(`${slider.id}-slider`);
+            const value = document.getElementById(`${slider.id}-value`);
+            if (input && value) {
+                input.addEventListener('input', () => {
+                    value.textContent = input.value;
+                });
+            }
+        });
     });
 
     // Ensure necessary functions are called when the page loads
