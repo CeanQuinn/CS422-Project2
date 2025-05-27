@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -43,6 +44,11 @@ app.get('/search', async (req, res) => {
     console.error('Spotify search failed:', err.response?.data || err.message);
     res.status(500).json({ error: 'Spotify search failed' });
   }
+});
+
+// Update the root route to serve index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../index.html'));
 });
 
 getToken(); // Get token at startup
