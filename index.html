@@ -78,12 +78,15 @@
         const div = document.createElement('div');
         div.className = 'track';
 
+        //get audio features object
+        const f = track.audio_features || {};
+
         div.innerHTML = `
           <img src="${track.album.images[0]?.url}" alt="Album Art" />
           <div class="info">
             <div><a href="${track.external_urls.spotify}" target="_blank">${track.name}</a></div>
             <div>by ${track.artists.map(artist => artist.name).join(', ')}</div>
-            ${track.preview_url ? `<audio controls src="${track.preview_url}"></audio>` : `<small>No preview</small>`}
+            ${track.external_urls.spotify ? `<audio controls src="${track.preview_url}"></audio>` : `<small>No preview</small>`}
           </div>
         `;
 
