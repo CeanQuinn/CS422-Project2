@@ -19,13 +19,13 @@ liveness = None, valence = None, tempo = None):
     """
     cols = ['danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness', 'speechiness', 'liveness', 'valence', 'tempo']
     arr = [danceability, energy, loudness, acousticness, instrumentalness, speechiness, liveness, valence, tempo]
-    tolerance = .1
+    tolerance = [.1, .1, 3, .1, 1, .1, .1, .1, 20]
     for i in range(len(arr)):
         if arr[i] is not None:
-            df = df[abs(df[cols[i]] - arr[i]) <= tolerance]
+            df = df[abs(df[cols[i]] - arr[i]) <= tolerance[i]]
     return df
             
 
 if __name__ == "__main__":
-    result = filter_df(valence=0.5)
+    result = filter_df(df=pd.read_pickle(os.path.join('data', 'cleaned_features.pkl')), valence=0.5)
     print(result)
