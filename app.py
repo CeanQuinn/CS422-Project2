@@ -46,7 +46,15 @@ def get_token():
 def search():
     global access_token
     q = request.args.get('q', '') # get query parameter
+    danceability = float(request.args.get('danceability', 0.5)) # filter parameter 
+    energy = float(request.args.get('energy', 0.5)) # filter parameter
+    acousticness = float(request.args.get('acousticness', 0.5)) # filter parameter
+    valence = float(request.args.get('valence', 0.5)) # filter parameter
+
+    # USE THE ABOVE PARAMETERS FOR FILTERS
+
     print(f'[SEARCH] Searched query: "{q}"') # DEBUG log
+    print(f'[FILTERS] Danceability: {danceability}, Energy: {energy}, Acousticness: {acousticness}, Valence: {valence}')
 
     if not access_token:
         get_token()
