@@ -58,7 +58,7 @@
   <h1>Spotify Track Search</h1>
   <input type="text" id="search" placeholder="Search tracks..." />
   <button onclick="search()">Search</button>
-
+  More actions
 <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
   <div style="display: flex; flex-direction: column; align-items: center;">
     <label for="danceability">Danceability</label>
@@ -96,7 +96,6 @@
     });
     async function search() {
       const query = document.getElementById('search').value;
-
       const danceability = document.getElementById('danceability').value;
       const energy = document.getElementById('energy').value;
       const acousticness = document.getElementById('acousticness').value;
@@ -105,6 +104,7 @@
       console.log({ query, danceability, energy, acousticness, valence }); // Debug
 
       const res = await fetch(`http://localhost:3001/search?q=${encodeURIComponent(query)}&danceability=${danceability}&energy=${energy}&acousticness=${acousticness}&valence=${valence}`);
+      
       const data = await res.json();
 
       const results = document.getElementById('results');
