@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CS 422 Spotify Search</title>
   <style>
+    <!--CSS style guidelines for web elements-->
     body {
       font-family: sans-serif;
       background: #121212;
@@ -70,7 +71,7 @@
   <h1>Spotify Track Search</h1>
   <input type="text" id="search" placeholder="Search tracks..." />
   <button onclick="search()">Search</button>
-
+  <!--Filter sliders, two for each of: danceability, energy, acousticness, valence-->
   <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
     <div style="display: flex; flex-direction: column; align-items: center;">
       <label>Danceability</label>
@@ -111,7 +112,7 @@
   </div>
 
   <div id="results"></div>
-
+  <!--Javascript function to facilitate searching -->
   <script>
     document.getElementById('search').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') {
@@ -119,16 +120,18 @@
       }
     });
     async function search() {
-      const query = document.getElementById('search').value;
-      const danceabilityMin = document.getElementById('danceabilityMin').value;
+      // get values from input fields
+      const query = document.getElementById('search').value; // get search query
+      const danceabilityMin = document.getElementById('danceabilityMin').value; // danceability min and max
       const danceabilityMax = document.getElementById('danceabilityMax').value;
-      const energyMin = document.getElementById('energyMin').value;
+      const energyMin = document.getElementById('energyMin').value; // energy min and max
       const energyMax = document.getElementById('energyMax').value;
-      const acousticnessMin = document.getElementById('acousticnessMin').value;
+      const acousticnessMin = document.getElementById('acousticnessMin').value; // acousticness min and max
       const acousticnessMax = document.getElementById('acousticnessMax').value;
-      const valenceMin = document.getElementById('valenceMin').value;
+      const valenceMin = document.getElementById('valenceMin').value; // valence min and max
       const valenceMax = document.getElementById('valenceMax').value;
 
+      // construct params for server endpoint request
       const params = new URLSearchParams({
         q: query,
         danceabilityMin,
@@ -141,23 +144,26 @@
         valenceMax
       });
 
+      // make a request to the server with the search query and filters
       const res = await fetch(`http://localhost:3001/search?${params.toString()}`);
 
+      // get the response data
       const data = await res.json();
 
       const results = document.getElementById('results');
-      results.innerHTML = '';
+      results.innerHTML = ''; // clear previous results
 
+      // construct html for each track result
       data.tracks.items.forEach(track => {
         const div = document.createElement('div');
         div.className = 'track';
 
         //get audio features object
-        const f = track.audio_features || {};
-        const trackName = track.name;
-        const artistNames = track.artists.map(artist => artist.name).join(',');
-        const youtubeQuery = encodeURIComponent(`${trackName} ${artistNames} ASL`)
-
+        const f = track.audio_features || {}; // audio features from the dataset
+        const trackName = track.name; // track name
+        const artistNames = track.artists.map(artist => artist.name).join(','); // artist names
+        const youtubeQuery = encodeURIComponent(`${trackName} ${artistNames} ASL`) // construct YouTube search query URL
+        // construct the HTML for the track
         div.innerHTML = `
           <img src="${track.album.images[0]?.url}" alt="Album Art" />
           <div class="info">
@@ -168,7 +174,7 @@
           </div>
         `;
 
-        results.appendChild(div);
+        results.appendChild(div); // append the track div to results
       });
     }
   </script>

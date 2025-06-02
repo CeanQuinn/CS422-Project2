@@ -20,8 +20,8 @@ DATASET = pd.read_pickle(os.path.join('data', 'cleaned_features.pkl')) # Load da
 # Fetch Spotify token
 def get_token():
     global access_token
-
-    client_id = os.getenv("SPOTIFY_CLIENT_ID")
+    
+    client_id = os.getenv("SPOTIFY_CLIENT_ID") # ID and secret from environment variables
     client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
     auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode() # create base64 encoded auth header
 
@@ -44,22 +44,19 @@ def get_token():
 # Search endpoint for finding tracks based on artist query
 @app.route('/search')
 def search():
+    # establish global access_token variable
     global access_token
     q = request.args.get('q', '') # get query parameter
-    danceability_min = float(request.args.get('danceabilityMin', 0.0))
+    danceability_min = float(request.args.get('danceabilityMin', 0.0)) # get danceability min value and max value
     danceability_max = float(request.args.get('danceabilityMax', 1.0))
-    energy_min = float(request.args.get('energyMin', 0.0))
+    energy_min = float(request.args.get('energyMin', 0.0)) # get energy min value and max value
     energy_max = float(request.args.get('energyMax', 1.0))
-    acousticness_min = float(request.args.get('acousticnessMin', 0.0))
+    acousticness_min = float(request.args.get('acousticnessMin', 0.0)) # get acousticness min value and max value
     acousticness_max = float(request.args.get('acousticnessMax', 1.0))
-    valence_min = float(request.args.get('valenceMin', 0.0))
+    valence_min = float(request.args.get('valenceMin', 0.0)) # get valence min value and max value
     valence_max = float(request.args.get('valenceMax', 1.0))
 
-
-
     print(f'[SEARCH] Searched query: "{q}"') # DEBUG log
-
-
     if not access_token:
         get_token()
 
@@ -92,10 +89,10 @@ def search():
         acousticness=(acousticness_min, acousticness_max),
         valence=(valence_min, valence_max)
     )
-    # Step 3: Get track metadata from Spotify
-    track_ids = filtered['id'].dropna().unique().tolist()[:20]  # Limit to 20 tracks
-    id_string = ','.join(track_ids)
-    try:
+    # Step 3: Get track metadata for resulting tracks from Spotify
+    track_ids = filtered['id'].dropna().unique().tolist()[:30]  # Get ids of tracks, limit to 30 tracks
+    id_string = ','.join(track_ids) # turn list of track IDs into a comma-separated string
+    try: # metadata request to Spotify API
         metadata_res = requests.get(
             'https://api.spotify.com/v1/tracks',
             headers=headers,
@@ -106,9 +103,9 @@ def search():
         return jsonify({'error': 'Failed to fetch track metadata'}), 500
 
     # Step 4: Join features from dataset with Spotify metadata
-    dataset_features = filtered.set_index('id').to_dict(orient='index')
+    dataset_features = filtered.set_index('id').to_dict(orient='index') # convert filtered DataFrame to a dictionary with track IDs as keys
     final = []
-    for track in tracks:
+    for track in tracks: # join metadata with dataset features
         track_id = track['id']
         track['audio_features'] = dataset_features.get(track_id, {})
         final.append(track)
