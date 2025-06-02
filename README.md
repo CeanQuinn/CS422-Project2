@@ -1,8 +1,8 @@
-CS 422 Project 2 - Music Community Dashboard
+CS 422 Project 2 - Enhanced Spotify Search
 
 ## NOTES
-All referenced scripts will be in /utils
-Some of them are simple wrappers others are more in depth
+All referenced scripts will be in /utils.
+Some of them are simple wrappers others are more in depth.
 *Intended to be ran in windows CMD terminal, while in the root project directory. Please make sure the terminal you are using is CMD; vscode typically defaults to poweshell.*
 
 ## Venv setup and use
