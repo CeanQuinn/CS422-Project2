@@ -118,7 +118,7 @@
         const f = track.audio_features || {};
         const trackName = track.name;
         const artistNames = track.artists.map(artist => artist.name).join(',');
-        const youtubeQuery = encodeURIComponent('${trackName} ${artistNames} ASL')
+        const youtubeQuery = encodeURIComponent(`${trackName} ${artistNames} ASL`)
 
         div.innerHTML = `
           <img src="${track.album.images[0]?.url}" alt="Album Art" />
