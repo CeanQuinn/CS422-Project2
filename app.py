@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 import pandas as pd
 import ast
 
+from filter import filter_df
+
 load_dotenv() # load environment variables from .env file
 
 app = Flask(__name__) #setup Flask app
@@ -46,7 +48,14 @@ def get_token():
 def search():
     global access_token
     q = request.args.get('q', '') # get query parameter
+    danceability = float(request.args.get('danceability', 0.5)) # filter parameter Add commentMore actions
+    energy = float(request.args.get('energy', 0.5)) # filter parameter
+    acousticness = float(request.args.get('acousticness', 0.5)) # filter parameter
+    valence = float(request.args.get('valence', 0.5)) # filter parameter
+
+
     print(f'[SEARCH] Searched query: "{q}"') # DEBUG log
+    print(f'[FILTERS] Danceability: {danceability}, Energy: {energy}, Acousticness: {acousticness}, Valence: {valence}')
 
     if not access_token:
         get_token()
@@ -78,6 +87,8 @@ def search():
     # Can do this in another function and return the filtered dataframe
     # Cleaned dataset has these columns:
     # id,artist_ids,danceability,energy,loudness,speechiness,acousticness,instrumentalness,liveness,valence,tempo
+
+    filtered = filter_df(filtered, danceability=danceability, energy=energy, acousticness=acousticness, valence=valence)
 
     # Step 3: Get track metadata from Spotify
     track_ids = filtered['id'].dropna().unique().tolist()[:20]  # Limit to 20 tracks
