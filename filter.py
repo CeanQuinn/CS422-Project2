@@ -18,20 +18,12 @@ liveness = None, valence = None, tempo = None):
     data = df.copy()
     cols = ['danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness', 'speechiness', 'liveness', 'valence', 'tempo']
     arr = [danceability, energy, loudness, acousticness, instrumentalness, speechiness, liveness, valence, tempo]
-    tolerance = np.array([.1, .1, 3, .1, 1, .1, .1, .1, 20])
+    
     for i in range(len(arr)):
-        if arr[i] is not None:
-            # Takes absolute value of difference between provided values and song values
-            # Then compares that to the tolerance, finding songs that fit the user's request
-            data = data[abs(data[cols[i]] - arr[i]) <= tolerance[i]]
-    while data.empty == True:
-        data = df.copy()
-        tolerance = tolerance + .1
-        for i in range(len(arr)):
-            if arr[i] is not None:
-                data = data[abs(data[cols[i]] - arr[i]) <= tolerance[i]]
-        if tolerance[0] == 1 and data.empty == True:
-            break
+        if arr[i] is not None and isinstance(arr[i], tuple):
+            min_val, max_val = arr[i]
+            data = data[(data[cols[i]] >= min_val) & (data[cols[i]] <= max_val)]
+
     return data
             
 

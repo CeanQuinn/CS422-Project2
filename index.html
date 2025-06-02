@@ -13,11 +13,23 @@
       padding: 2rem;
     }
 
+    label, span {
+      margin: -0.1rem 0;
+      padding: 0;
+      font-size: 1rem;
+    }
+
     input, button {
       font-size: 1.2rem;
       padding: 0.5rem;
       margin: 0.5rem;
       border-radius: 5px;
+    }
+
+    input[type="range"] {
+      width: 120px;
+      height: 30px;
+      margin: -0.5rem 0;
     }
 
     .track {
@@ -58,33 +70,45 @@
   <h1>Spotify Track Search</h1>
   <input type="text" id="search" placeholder="Search tracks..." />
   <button onclick="search()">Search</button>
-  More actions
-<div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
-  <div style="display: flex; flex-direction: column; align-items: center;">
-    <label for="danceability">Danceability</label>
-    <input type="range" id="danceability" min="0" max="1" step="0.01" value="0.5"
-           oninput="document.getElementById('danceabilityVal').innerText = this.value">
-    <span id="danceabilityVal">0.5</span>
+
+  <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <label>Danceability</label>
+      <input type="range" id="danceabilityMin" min="0" max="1" step="0.01" value="0.3"
+            oninput="document.getElementById('danceabilityMinVal').innerText = this.value">
+      <span id="danceabilityMinVal">0.3</span>
+      <input type="range" id="danceabilityMax" min="0" max="1" step="0.01" value="0.7"
+            oninput="document.getElementById('danceabilityMaxVal').innerText = this.value">
+      <span id="danceabilityMaxVal">0.7</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <label>Energy</label>
+      <input type="range" id="energyMin" min="0" max="1" step="0.01" value="0.3"
+            oninput="document.getElementById('energyMinVal').innerText = this.value">
+      <span id="energyMinVal">0.3</span>
+      <input type="range" id="energyMax" min="0" max="1" step="0.01" value="0.7"
+            oninput="document.getElementById('energyMaxVal').innerText = this.value">
+      <span id="energyMaxVal">0.7</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <label>Acousticness</label>
+      <input type="range" id="acousticnessMin" min="0" max="1" step="0.01" value="0.3"
+            oninput="document.getElementById('acousticnessMinVal').innerText = this.value">
+      <span id="acousticnessMinVal">0.3</span>
+      <input type="range" id="acousticnessMax" min="0" max="1" step="0.01" value="0.7"
+            oninput="document.getElementById('acousticnessMaxVal').innerText = this.value">
+      <span id="acousticnessMaxVal">0.7</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <label>Valence</label>
+      <input type="range" id="valenceMin" min="0" max="1" step="0.01" value="0.3"
+            oninput="document.getElementById('valenceMinVal').innerText = this.value">
+      <span id="valenceMinVal">0.3</span>
+      <input type="range" id="valenceMax" min="0" max="1" step="0.01" value="0.7"
+            oninput="document.getElementById('valenceMaxVal').innerText = this.value">
+      <span id="valenceMaxVal">0.7</span>
+    </div>
   </div>
-  <div style="display: flex; flex-direction: column; align-items: center;">
-    <label for="energy">Energy</label>
-    <input type="range" id="energy" min="0" max="1" step="0.01" value="0.5"
-           oninput="document.getElementById('energyVal').innerText = this.value">
-    <span id="energyVal">0.5</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center;">
-    <label for="acousticness">Acousticness</label>
-    <input type="range" id="acousticness" min="0" max="1" step="0.01" value="0.5"
-           oninput="document.getElementById('acousticnessVal').innerText = this.value">
-    <span id="acousticnessVal">0.5</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center;">
-    <label for="valence">Valence</label>
-    <input type="range" id="valence" min="0" max="1" step="0.01" value="0.5"
-           oninput="document.getElementById('valenceVal').innerText = this.value">
-    <span id="valenceVal">0.5</span>
-  </div>
-</div>
 
   <div id="results"></div>
 
@@ -96,15 +120,29 @@
     });
     async function search() {
       const query = document.getElementById('search').value;
-      const danceability = document.getElementById('danceability').value;
-      const energy = document.getElementById('energy').value;
-      const acousticness = document.getElementById('acousticness').value;
-      const valence = document.getElementById('valence').value;
+      const danceabilityMin = document.getElementById('danceabilityMin').value;
+      const danceabilityMax = document.getElementById('danceabilityMax').value;
+      const energyMin = document.getElementById('energyMin').value;
+      const energyMax = document.getElementById('energyMax').value;
+      const acousticnessMin = document.getElementById('acousticnessMin').value;
+      const acousticnessMax = document.getElementById('acousticnessMax').value;
+      const valenceMin = document.getElementById('valenceMin').value;
+      const valenceMax = document.getElementById('valenceMax').value;
 
-      console.log({ query, danceability, energy, acousticness, valence }); // Debug
+      const params = new URLSearchParams({
+        q: query,
+        danceabilityMin,
+        danceabilityMax,
+        energyMin,
+        energyMax,
+        acousticnessMin,
+        acousticnessMax,
+        valenceMin,
+        valenceMax
+      });
 
-      const res = await fetch(`http://localhost:3001/search?q=${encodeURIComponent(query)}&danceability=${danceability}&energy=${energy}&acousticness=${acousticness}&valence=${valence}`);
-      
+      const res = await fetch(`http://localhost:3001/search?${params.toString()}`);
+
       const data = await res.json();
 
       const results = document.getElementById('results');
@@ -125,9 +163,8 @@
           <div class="info">
             <div><a href="${track.external_urls.spotify}" target="_blank">${track.name}</a></div>
             <div>by ${track.artists.map(artist => artist.name).join(', ')}</div>
-            ${track.external_urls.spotify ? `<audio controls src="${track.preview_url}"></audio>` : `<small>No preview</small>`}
             <div><a href = "https://www.youtube.com/results?search_query=${youtubeQuery}" target="_blank">
-              <button>ASL YouTube</button></a></div>
+              <button>Search for ASL on YouTube</button></a></div>
           </div>
         `;
 

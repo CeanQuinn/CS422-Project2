@@ -1,13 +1,11 @@
 import os
 import base64
-import time
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from threading import Timer
 from dotenv import load_dotenv
 import pandas as pd
-import ast
 
 from filter import filter_df
 
@@ -48,14 +46,19 @@ def get_token():
 def search():
     global access_token
     q = request.args.get('q', '') # get query parameter
-    danceability = float(request.args.get('danceability', 0.5)) # filter parameter Add commentMore actions
-    energy = float(request.args.get('energy', 0.5)) # filter parameter
-    acousticness = float(request.args.get('acousticness', 0.5)) # filter parameter
-    valence = float(request.args.get('valence', 0.5)) # filter parameter
+    danceability_min = float(request.args.get('danceabilityMin', 0.0))
+    danceability_max = float(request.args.get('danceabilityMax', 1.0))
+    energy_min = float(request.args.get('energyMin', 0.0))
+    energy_max = float(request.args.get('energyMax', 1.0))
+    acousticness_min = float(request.args.get('acousticnessMin', 0.0))
+    acousticness_max = float(request.args.get('acousticnessMax', 1.0))
+    valence_min = float(request.args.get('valenceMin', 0.0))
+    valence_max = float(request.args.get('valenceMax', 1.0))
+
 
 
     print(f'[SEARCH] Searched query: "{q}"') # DEBUG log
-    print(f'[FILTERS] Danceability: {danceability}, Energy: {energy}, Acousticness: {acousticness}, Valence: {valence}')
+
 
     if not access_token:
         get_token()
@@ -81,15 +84,14 @@ def search():
     if filtered.empty:
         return jsonify({'error': 'No tracks found for this artist in the dataset'}), 404
     
-    # THIS IS BEST PLACE FOR FILTERING TRACKS
-    # Take 'filtered' dataframe and filter out tracks based on user specified criteria
-    # Will most likely have to add the filter-silder values to the arguements for this endpoint
-    # Can do this in another function and return the filtered dataframe
-    # Cleaned dataset has these columns:
-    # id,artist_ids,danceability,energy,loudness,speechiness,acousticness,instrumentalness,liveness,valence,tempo
-
-    filtered = filter_df(filtered, danceability=danceability, energy=energy, acousticness=acousticness, valence=valence)
-
+    # passes of track results to filter_df function to filter by user specified values    
+    filtered = filter_df(
+        filtered,
+        danceability=(danceability_min, danceability_max),
+        energy=(energy_min, energy_max),
+        acousticness=(acousticness_min, acousticness_max),
+        valence=(valence_min, valence_max)
+    )
     # Step 3: Get track metadata from Spotify
     track_ids = filtered['id'].dropna().unique().tolist()[:20]  # Limit to 20 tracks
     id_string = ','.join(track_ids)
