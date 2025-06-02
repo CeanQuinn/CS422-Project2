@@ -1,9 +1,6 @@
-
 import os
 import base64
 import time
-#from flask import Flask, request, jsonify
-#from flask_cors import CORS
 from threading import Timer
 from dotenv import load_dotenv
 import pandas as pd
@@ -18,13 +15,24 @@ liveness = None, valence = None, tempo = None):
     Takes values specified by user in sliders to filter dataframe,
     returns dataframe with songs that best fit
     """
+    data = df.copy()
     cols = ['danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness', 'speechiness', 'liveness', 'valence', 'tempo']
     arr = [danceability, energy, loudness, acousticness, instrumentalness, speechiness, liveness, valence, tempo]
-    tolerance = [.1, .1, 3, .1, 1, .1, .1, .1, 20]
+    tolerance = np.array([.1, .1, 3, .1, 1, .1, .1, .1, 20])
     for i in range(len(arr)):
         if arr[i] is not None:
-            df = df[abs(df[cols[i]] - arr[i]) <= tolerance[i]]
-    return df
+            # Takes absolute value of difference between provided values and song values
+            # Then compares that to the tolerance, finding songs that fit the user's request
+            data = data[abs(data[cols[i]] - arr[i]) <= tolerance[i]]
+    while data.empty == True:
+        data = df.copy()
+        tolerance = tolerance + .1
+        for i in range(len(arr)):
+            if arr[i] is not None:
+                data = data[abs(data[cols[i]] - arr[i]) <= tolerance[i]]
+        if tolerance[0] == 1 and data.empty == True:
+            break
+    return data
             
 
 if __name__ == "__main__":
