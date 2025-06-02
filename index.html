@@ -80,6 +80,9 @@
 
         //get audio features object
         const f = track.audio_features || {};
+        const trackName = track.name;
+        const artistNames = track.artists.map(artist => artist.name).join(',');
+        const youtubeQuery = encodeURIComponent(`${trackName} ${artistNames} ASL`);
 
         div.innerHTML = `
           <img src="${track.album.images[0]?.url}" alt="Album Art" />
@@ -87,6 +90,8 @@
             <div><a href="${track.external_urls.spotify}" target="_blank">${track.name}</a></div>
             <div>by ${track.artists.map(artist => artist.name).join(', ')}</div>
             ${track.external_urls.spotify ? `<audio controls src="${track.preview_url}"></audio>` : `<small>No preview</small>`}
+            <div><a href="https://www.youtube.com/results?search_query=${youtubeQuery}" target="_blank">
+              <button>ASL YouTube</button></a></div>
           </div>
         `;
 
