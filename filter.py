@@ -1,3 +1,10 @@
+"""
+Team: Lucy Acheson, Will Jurewitz, Cooper Myton, Cean Quinn, Kevin Steele
+Advanced Spotify Song search for Hard of Hearing
+Filtering/Results Component
+Authors: Kevin Steele, William Jurewitz
+Last edited --- 6/2/2025
+"""
 import os
 import pandas as pd
 
