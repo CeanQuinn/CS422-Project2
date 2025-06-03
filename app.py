@@ -56,6 +56,8 @@ def search():
     q = request.args.get('q', '') # get query parameter
     danceability_min = float(request.args.get('danceabilityMin', 0.0)) # get danceability min value and max value
     danceability_max = float(request.args.get('danceabilityMax', 1.0))
+    speechiness_min = float(request.args.get('speechinessMin', 0.0)) # get speechiness min value and max value
+    speechiness_max = float(request.args.get('speechinessMax', 1.0))
     energy_min = float(request.args.get('energyMin', 0.0)) # get energy min value and max value
     energy_max = float(request.args.get('energyMax', 1.0))
     acousticness_min = float(request.args.get('acousticnessMin', 0.0)) # get acousticness min value and max value
@@ -94,6 +96,7 @@ def search():
         danceability=(danceability_min, danceability_max),
         energy=(energy_min, energy_max),
         acousticness=(acousticness_min, acousticness_max),
+        speechiness=(speechiness_min, speechiness_max),
         valence=(valence_min, valence_max)
     )
     # Step 3: Get track metadata for resulting tracks from Spotify
