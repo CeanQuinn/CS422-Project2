@@ -36,6 +36,7 @@ All dependencies are listed in `requirements.txt` and will be installed during t
      - Create a virtual environment.
      - Install dependencies from `requirements.txt`.
      - Set necessary environment variables for Flask.
+   - Bash alternatives exist within the utils\ directory as well with Mac_ prepended. 
 
 3. **Activate the virtual environment**:
    - Run `utils\enterVenv.cmd` to activate the virtual environment.
