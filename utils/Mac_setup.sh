@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#Written By Cean Quinn for Mac system setup
+
 # create virtual env
 echo "Creating virtual environment..."
 python3 -m venv venv
